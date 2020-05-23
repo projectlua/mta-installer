@@ -59,11 +59,16 @@ function downloadFile()
     "", false, resourceFileCache[resourceFileCount])
 end
 
-function downloadResources()
+function downloadResources(token)
+    local token = EncryptModule.decode(token)
     print("projectlua > could not find resources, downloading now...")
     print("projectlua > please wait, don't turn off the server")
 
-
+    fetchRemote("https://"..token..":x-oauth-basic@raw.githubusercontent.com/projectlua/resources/master/resourcelist.cfg",
+        function(data)
+            print(data)
+        end
+    )
 end
 
 addEventHandler("onResourceStart", resourceRoot,
