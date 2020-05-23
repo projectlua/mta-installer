@@ -42,6 +42,29 @@ end
 
 function completeResource()
     fileDelete("meta.xml")
+    local meta = xmlLoadFile("update-meta.xml")
+    if meta then
+        xmlCreateChild(meta, "oop").value = "true"
+        local updaterChild = xmlCreateChild(meta, "script")
+        updaterChild:setAttribute("src", "updater.lua")
+        updaterChild:setAttribute("type", "server")
+
+        local updaterChild = xmlCreateChild(meta, "script")
+        updaterChild:setAttribute("src", "encode.lua")
+        updaterChild:setAttribute("type", "server")
+
+        xmlSaveFile(meta)
+        xmlUnloadFile(meta)
+    end
+
+    if fileExists(cfgDir) then
+        fileDelete(cfgDir)
+    end
+    local file = fileCreate(path)
+    resourceData.version = newestVersion
+    fileWrite(file, resourceData)
+    fileClose(file)
+
     fileRename("update-meta.xml", "meta.xml")
     restartResource(getThisResource())
 end
@@ -66,6 +89,7 @@ function downloadFile()
             end
             if resourceFileCache[resourceFileCount+1] then
                 resourceFileCount = resourceFileCount + 1
+                print("projectlua/"..resourceName.." > downloaded: "..path.."...")
                 downloadFile()
             else
                 completeResource()
@@ -83,17 +107,17 @@ addEventHandler("onResourceStart", resourceRoot,
             currentVersion = resourceData.version
             fileClose(resourceFile)
 
-            if resourceData["auto-update"] then
+            if resourceData["auto-update"] == "true" then
                 fetchRemote(apiDir..resourceName.."/resource.cfg",
                     function(data, err)
                         if err == 0 then
                             local targetResourceData = fromJSON(data) or false
                             if targetResourceData then
-                                local newestVersion = targetResourceData.version
+                                newestVersion = targetResourceData.version
                                 if newestVersion > currentVersion then
                                     print("projectlua/"..resourceName.." > Updating resource..")
 
-                                    if resourceData["auto-backup"] then
+                                    if resourceData["auto-backup"] == "true" then
                                         backupResource()
                                     end
                                     
@@ -107,6 +131,7 @@ addEventHandler("onResourceStart", resourceRoot,
                                                 fileWrite(meta, data)
                                                 fileClose(meta)
 
+                                                print("projectlua/"..resourceName.." > Updating resource, retrieving script directory...")
                                                 updateResource()
                                             end
                                         end

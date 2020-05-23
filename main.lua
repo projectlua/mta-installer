@@ -27,12 +27,16 @@ end
 
 function completeResource()
     fileDelete("meta.xml")
-    fileRename("update-meta.xml", "meta.xml")
 
-    fileDelete(cfgDir)
-    local file = fileCreate(cfgDir)
-    fileWrite(file, toJSON(targetResourceData))
+    if fileExists(cfgDir) then
+        fileDelete(cfgDir)
+    end
+    local file = fileCreate(path)
+    resourceData.version = newestVersion
+    fileWrite(file, resourceData)
     fileClose(file)
+
+    fileRename("update-meta.xml", "meta.xml")
     restartResource(getThisResource())
 end
 
@@ -121,7 +125,7 @@ addEventHandler("onResourceStart", resourceRoot,
                     if err == 0 then
                         targetResourceData = fromJSON(data) or false
                         if targetResourceData then
-                            local newestVersion = targetResourceData.version
+                            newestVersion = targetResourceData.version
                             if newestVersion > currentVersion then
                                 print("projectlua/"..resourceName.." > Updating resource..")
 
