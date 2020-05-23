@@ -1,7 +1,7 @@
 local resourceFileCache = {}
 local resourceName = getResourceName(getThisResource())
 local cfgDir = "resource.cfg"
-
+--update test
 function updateResource()
     local meta = xmlLoadFile("update-meta.xml")
     local metaData = xmlNodeGetChildren(meta)
