@@ -3,6 +3,10 @@ local resourceName = getResourceName(getThisResource())
 local cfgDir = "resource.cfg"
 local resourceTag = "[projectlua]"
 
+function check()
+    return license
+end
+
 function updateResource()
     local meta = xmlLoadFile("update-meta.xml")
     local metaData = xmlNodeGetChildren(meta)
