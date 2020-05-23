@@ -1,6 +1,7 @@
 local resourceFileCache = {}
 local resourceName = getResourceName(getThisResource())
 local cfgDir = "resource.cfg"
+local resourceTag = "[projectlua]/"
 
 function updateResource()
     local meta = xmlLoadFile("update-meta.xml")
@@ -60,13 +61,31 @@ function downloadFile()
 end
 
 function downloadResources(token)
-    local token = EncryptModule.decode(token)
     print("projectlua > could not find resources, downloading now...")
     print("projectlua > please wait, don't turn off the server")
+    fetchRemote("https://"..token..":x-oauth-basic@raw.githubusercontent.com/yourpalenes/resources/master/resourcelist.cfg",
+        function(data, err)
+            if err == 0 then
+                for i, resource in ipairs(fromJSON(tostring(data))) do
+                    if not getResourceFromName(resource) then
+                        local res = createResource(resource)
 
-    fetchRemote("https://"..token..":x-oauth-basic@raw.githubusercontent.com/projectlua/resources/master/resourcelist.cfg",
-        function(data)
-            print(data)
+                        local updaterFile = fileOpen("file/updater.lua")
+                        local updaterData = fileRead(updaterFile, fileGetSize(updaterFile))
+                        local file = fileCreate(":"..resourceName.."/updater.lua")
+                        fileWrite(file, updaterData)
+                        fileClose(file)
+                        
+                        local resourceFile = fileOpen("file/resource.cfg")
+                        local resourceData = fileRead(resourceFile, fileGetSize(resourceFile))
+                        local file = fileCreate(":"..resourceName.."/resource.cfg")
+                        fileWrite(file, resourceData)
+                        fileClose(file)
+                    end
+                end
+            else
+                print("projectlua > could not load the remote server")
+            end
         end
     )
 end
