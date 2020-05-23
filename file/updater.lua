@@ -2,7 +2,6 @@ local resourceFileCache = {}
 local resourceName = getResourceName(getThisResource())
 local cfgDir = "resource.cfg"
 
-
 function backupResource()
     local meta = xmlLoadFile("meta.xml")
     local metaData = xmlNodeGetChildren(meta)
@@ -41,7 +40,9 @@ function updateResource()
 end
 
 function completeResource()
-    fileDelete("update-meta.xml")
+    fileDelete("meta.xml")
+    fileRename("update-meta.xml", "meta.xml")
+    restartResource(getThisResource())
 end
 
 function downloadFile()
