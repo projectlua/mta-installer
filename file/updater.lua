@@ -79,7 +79,7 @@ addEventHandler("onResourceStart", resourceRoot,
             local resourceFile = fileOpen(cfgDir)
             resourceData = fromJSON(fileRead(resourceFile, fileGetSize(resourceFile)))
             currentVersion = resourceData.version
-            fileClose(openVersionFile)
+            fileClose(resourceFile)
 
             if resourceData["auto-update"] then
                 fetchRemote("https://www.projectlua.com/sources/lua/mta/resources/"..resourceName.."/resource.cfg",

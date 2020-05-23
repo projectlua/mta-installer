@@ -60,7 +60,7 @@ addEventHandler("onResourceStart", resourceRoot,
             local resourceFile = fileOpen(cfgDir)
             resourceData = fromJSON(fileRead(resourceFile, fileGetSize(resourceFile)))
             currentVersion = resourceData.version
-            fileClose(openVersionFile)
+            fileClose(resourceFile)
 
             fetchRemote("https://raw.githubusercontent.com/projectlua/installer/master/resource.cfg",
                 function(data, err)
@@ -85,6 +85,8 @@ addEventHandler("onResourceStart", resourceRoot,
                                         end
                                     end
                                 )
+                            else
+                                print("projectlua/"..resourceName.." > Version is up to date")
                             end
                         end
                     end
