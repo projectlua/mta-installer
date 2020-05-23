@@ -9,7 +9,7 @@ function backupResource()
         for index, node in ipairs(metaData) do
             local fileType = xmlNodeGetName(node)
             local fileLocation = xmlNodeGetAttribute(node, "src")
-            if fileType == "script" or fileType == "file" then
+            if fileType == "script" or fileType == "file" or fileType == "config" or fileType == "map" or fileType == "html" then
 
                 if fileExists("old/"..currentVersion.."/"..fileLocation) then
                     fileDelete("old/"..currentVersion.."/"..fileLocation)
