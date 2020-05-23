@@ -1,7 +1,7 @@
 local resourceFileCache = {}
 local resourceName = getResourceName(getThisResource())
 local cfgDir = "resource.cfg"
---update test
+--updated
 function updateResource()
     local meta = xmlLoadFile("update-meta.xml")
     local metaData = xmlNodeGetChildren(meta)
@@ -23,6 +23,11 @@ end
 function completeResource()
     fileDelete("meta.xml")
     fileRename("update-meta.xml", "meta.xml")
+
+    fileDelete(cfgDir)
+    local file = fileCreate(cfgDir)
+    fileWrite(file, toJSON(targetResourceData))
+    fileClose(file)
     restartResource(getThisResource())
 end
 
@@ -65,7 +70,7 @@ addEventHandler("onResourceStart", resourceRoot,
             fetchRemote("https://raw.githubusercontent.com/projectlua/installer/master/resource.cfg",
                 function(data, err)
                     if err == 0 then
-                        local targetResourceData = fromJSON(data) or false
+                        targetResourceData = fromJSON(data) or false
                         if targetResourceData then
                             local newestVersion = targetResourceData.version
                             if newestVersion > currentVersion then
