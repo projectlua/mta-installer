@@ -35,6 +35,7 @@ function updateResource()
     end
     xmlUnloadFile(meta)
     
+    
     resourceFileCount = 1
     downloadFile()
 end
@@ -50,7 +51,7 @@ function downloadFile()
         completeResource()
         return
     end
-    fetchRemote("https://www.projectlua.com/sources/lua/mta/resources/"..resourceName.."/"..resourceFileCache[resourceFileCount],
+    fetchRemote(apiDir..resourceName.."/"..resourceFileCache[resourceFileCount],
         function(data, err, path)
             if err == 0 then
                 local size = 0
@@ -75,6 +76,7 @@ end
 
 addEventHandler("onResourceStart", resourceRoot,
     function()
+        apiDir = EncryptModule.getLink()
         if fileExists(cfgDir) then
             local resourceFile = fileOpen(cfgDir)
             resourceData = fromJSON(fileRead(resourceFile, fileGetSize(resourceFile)))
@@ -82,7 +84,7 @@ addEventHandler("onResourceStart", resourceRoot,
             fileClose(resourceFile)
 
             if resourceData["auto-update"] then
-                fetchRemote("https://www.projectlua.com/sources/lua/mta/resources/"..resourceName.."/resource.cfg",
+                fetchRemote(apiDir..resourceName.."/resource.cfg",
                     function(data, err)
                         if err == 0 then
                             local targetResourceData = fromJSON(data) or false
@@ -95,7 +97,7 @@ addEventHandler("onResourceStart", resourceRoot,
                                         backupResource()
                                     end
                                     
-                                    fetchRemote("https://www.projectlua.com/sources/lua/mta/resources/"..resourceName.."/meta.xml",
+                                    fetchRemote(apiDir..resourceName.."/meta.xml",
                                         function(data, err)
                                             if err == 0 then
                                                 if fileExists("update-meta.xml") then

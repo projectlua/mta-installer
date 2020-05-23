@@ -1,7 +1,7 @@
 local resourceFileCache = {}
 local resourceName = getResourceName(getThisResource())
 local cfgDir = "resource.cfg"
-local resourceTag = "[projectlua]/"
+local resourceTag = "[projectlua]"
 
 function updateResource()
     local meta = xmlLoadFile("update-meta.xml")
@@ -60,29 +60,43 @@ function downloadFile()
     "", false, resourceFileCache[resourceFileCount])
 end
 
-function downloadResources(token)
+function downloadResources()
     print("projectlua > could not find resources, downloading now...")
     print("projectlua > please wait, don't turn off the server")
-    fetchRemote("https://"..token..":x-oauth-basic@raw.githubusercontent.com/yourpalenes/resources/master/resourcelist.cfg",
+    fetchRemote(EncryptModule.getLink().."resourcelist.cfg",
         function(data, err)
             if err == 0 then
-                for i, resource in ipairs(fromJSON(tostring(data))) do
-                    if not getResourceFromName(resource) then
-                        local res = createResource(resource)
+                print("projectlua > started downloading resources (0/"..#fromJSON(tostring(data))..")")
+                local loadedResource = 0
+                for i, resourceDir in ipairs(fromJSON(tostring(data))) do
+                    if not getResourceFromName(resourceDir) then
+                        local resourceElement = createResource(resourceDir, resourceTag)
 
-                        local updaterFile = fileOpen("file/updater.lua")
-                        local updaterData = fileRead(updaterFile, fileGetSize(updaterFile))
-                        local file = fileCreate(":"..resourceName.."/updater.lua")
-                        fileWrite(file, updaterData)
-                        fileClose(file)
-                        
-                        local resourceFile = fileOpen("file/resource.cfg")
-                        local resourceData = fileRead(resourceFile, fileGetSize(resourceFile))
-                        local file = fileCreate(":"..resourceName.."/resource.cfg")
-                        fileWrite(file, resourceData)
-                        fileClose(file)
+                        fileCopy("file/updater.lua", ":"..resourceDir.."/updater.lua")
+                        fileCopy("file/resource.cfg", ":"..resourceDir.."/resource.cfg")
+                        fileCopy("modules/encode.lua", ":"..resourceDir.."/encode.lua")
+
+                        local meta = xmlLoadFile(":"..resourceDir.."/meta.xml")
+                        if meta then
+                            xmlCreateChild(meta, "oop").value = "true"
+                            local updaterChild = xmlCreateChild(meta, "script")
+                            updaterChild:setAttribute("src", "updater.lua")
+                            updaterChild:setAttribute("type", "server")
+
+                            local updaterChild = xmlCreateChild(meta, "script")
+                            updaterChild:setAttribute("src", "encode.lua")
+                            updaterChild:setAttribute("type", "server")
+
+                            xmlSaveFile(meta)
+                            xmlUnloadFile(meta)
+                        end
+                        print("projectlua/"..resourceDir.." > downloaded resource ("..loadedResource.."/"..#fromJSON(tostring(data))..")")
+                        loadedResource = loadedResource + 1
                     end
                 end
+                prepareSetup()
+
+                print("projectlua > downloaded "..loadedResource.." resource, waiting for update...")
             else
                 print("projectlua > could not load the remote server")
             end
