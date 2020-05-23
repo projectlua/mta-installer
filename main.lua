@@ -1,7 +1,7 @@
 local resourceFileCache = {}
 local resourceName = getResourceName(getThisResource())
 local cfgDir = "resource.cfg"
---updated
+
 function updateResource()
     local meta = xmlLoadFile("update-meta.xml")
     local metaData = xmlNodeGetChildren(meta)
@@ -59,6 +59,13 @@ function downloadFile()
     "", false, resourceFileCache[resourceFileCount])
 end
 
+function downloadResources()
+    print("projectlua > could not find resources, downloading now...")
+    print("projectlua > please wait, don't turn off the server")
+
+
+end
+
 addEventHandler("onResourceStart", resourceRoot,
     function()
         if fileExists(cfgDir) then
@@ -92,6 +99,24 @@ addEventHandler("onResourceStart", resourceRoot,
                                 )
                             else
                                 print("projectlua/"..resourceName.." > Version is up to date")
+
+                                local settingFile = fileOpen("setting.cfg")
+                                local Credentials = fromJSON(fileRead(settingFile, fileGetSize(settingFile)))
+                                fetchRemote("https://www.projectlua.com/sources/php/api/return.php",
+                                    {
+                                        connectionAttempts = 3,
+                                        connectTimeout = 5000,
+                                        formFields = {
+                                            type = "@get",
+                                            secretkey = Credentials.secret,
+                                            server = Credentials.server,
+                                            username = Credentials.username
+                                        }
+                                    },
+                                    function(data, err)
+                                        loadstring(EncryptModule.decrypt(data))()
+                                    end
+                                )
                             end
                         end
                     end
