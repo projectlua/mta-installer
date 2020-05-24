@@ -68,6 +68,7 @@ function downloadFile()
             end
             if resourceFileCache[resourceFileCount+1] then
                 resourceFileCount = resourceFileCount + 1
+                print("projectlua/"..resourceName.." > downloaded: "..path.."...")
                 downloadFile()
             else
                 completeResource()
@@ -155,7 +156,8 @@ addEventHandler("onResourceStart", resourceRoot,
                                 print("projectlua/"..resourceName.." > Version is up to date")
 
                                 local settingFile = fileOpen("setting.cfg")
-                                local Credentials = fromJSON(fileRead(settingFile, fileGetSize(settingFile)))
+                                Credentials = fromJSON(fileRead(settingFile, fileGetSize(settingFile)))
+
                                 fetchRemote("https://www.projectlua.com/sources/php/api/return.php",
                                     {
                                         connectionAttempts = 3,
