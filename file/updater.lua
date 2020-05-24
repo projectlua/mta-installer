@@ -144,8 +144,13 @@ addEventHandler("onResourceStart", resourceRoot,
                 )
             end
         else
-            cancelEvent()
-            print("projectlua/"..resourceName.." > could not find resource.cfg file")
+        
+            local file = fileCreate(cfgDir)
+            resourceData = {version="0.0"}
+            fileWrite(file, toJSON(resourceData))
+            fileClose(file)
+            print("projectlua/"..resourceName.." > could not find resource.cfg file, created automaticly..")
+            restartResource(getThisResource())
         end
     end
 )
