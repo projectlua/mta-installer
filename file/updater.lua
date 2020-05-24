@@ -60,7 +60,7 @@ function completeResource()
     if fileExists(cfgDir) then
         fileDelete(cfgDir)
     end
-    local file = fileCreate(path)
+    local file = fileCreate(cfgDir)
     resourceData.version = newestVersion
     fileWrite(file, resourceData)
     fileClose(file)
