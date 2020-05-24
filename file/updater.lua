@@ -1,5 +1,6 @@
 local resourceFileCache = {}
 local resourceName = getResourceName(getThisResource())
+if resourceName == "installer" then return end
 local cfgDir = "resource.cfg"
 
 function backupResource()
