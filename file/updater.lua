@@ -63,7 +63,7 @@ function completeResource()
     end
     local file = fileCreate(cfgDir)
     resourceData.version = newestVersion
-    fileWrite(file, resourceData)
+    fileWrite(file, toJSON(resourceData))
     fileClose(file)
 
     fileRename("update-meta.xml", "meta.xml")
