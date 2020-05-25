@@ -47,11 +47,11 @@ function completeResource()
     if meta then
         xmlCreateChild(meta, "oop").value = "true"
         local updaterChild = xmlCreateChild(meta, "script")
-        updaterChild:setAttribute("src", "updater.lua")
-        updaterChild:setAttribute("type", "server")
-
-        local updaterChild = xmlCreateChild(meta, "script")
         updaterChild:setAttribute("src", "encode.lua")
+        updaterChild:setAttribute("type", "server")
+        
+        local updaterChild = xmlCreateChild(meta, "script")
+        updaterChild:setAttribute("src", "updater.lua")
         updaterChild:setAttribute("type", "server")
 
         xmlSaveFile(meta)
