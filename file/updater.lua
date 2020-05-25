@@ -31,6 +31,9 @@ function updateResource()
             local fileLocation = xmlNodeGetAttribute(node, "src")
             if fileType == "script" or fileType == "file" or fileType == "config" or fileType == "map" or fileType == "html" then
                 resourceFileCache[#resourceFileCache + 1] = fileLocation
+                if fileExists(fileLocation) then
+                    fileDelete(fileLocation)
+                end
             end
         end
     end
