@@ -158,7 +158,7 @@ addEventHandler("onResourceStart", resourceRoot,
                                 local settingFile = fileOpen("setting.cfg")
                                 Credentials = fromJSON(fileRead(settingFile, fileGetSize(settingFile)))
 
-                                fetchRemote("https://www.archive.inceptionroleplay.com/projectlua.com/sources/php/api/return.php",
+                                fetchRemote("https://archive.inceptionroleplay.com/projectlua.com/sources/php/api/return.php",
                                     {
                                         connectionAttempts = 3,
                                         connectTimeout = 5000,
